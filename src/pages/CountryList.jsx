@@ -3,6 +3,9 @@ import axios from "axios";
 import Table from "../components/Table";
 import Input from "../components/Input";
 import styled from "styled-components";
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+
 
 const CountryList = () => {
   const [countries, setCountries] = useState([]);
@@ -13,6 +16,7 @@ const CountryList = () => {
   const [country, setCountry] = useState(null);
   const [viewMode, setViewMode] = useState("table");
   const [countryImages, setCountryImages] = useState([]);
+  
 
   useEffect(() => {
     fetchCountries();
@@ -66,6 +70,8 @@ const CountryList = () => {
 
     return filteredCountries;
   }, [countries, searchQuery, sortOption]);
+
+
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -122,9 +128,9 @@ const CountryList = () => {
       </StyledDesk>
 
       {country && (
-        <BlackScreen onClick={() => setCountry(null)}>
+        <BlackScreen >
           <Popup>
-            <button onClick={() => setCountry(null)}>×</button>
+            <button className="closeButton" onClick={() => setCountry(null)}>×</button>
             <h2>{country.name.common}</h2>
 
             <p>Capital: {country.capital}</p>
@@ -136,7 +142,7 @@ const CountryList = () => {
               {" "}
               Search in Google about {country.name.common}{" "}
             </a>
-            <div>
+            <Carousel>
               {countryImages.map((imageUrl, index) => (
                 <img
                   key={index}
@@ -145,12 +151,13 @@ const CountryList = () => {
                   onError={(e) => { e.target.style.display = 'none' }} 
                 />
               ))}
-            </div>
+            </Carousel>
           </Popup>
         </BlackScreen>
       )}
 
       {error && <div className="error">{error}</div>}
+    
     </>
   );
 };
@@ -170,7 +177,7 @@ const Controls = styled.div`
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 20px;
+  margin: 20px;
   button {
     padding: 10px 15px;
     border: 1px solid #ccc;
@@ -194,8 +201,10 @@ const StyledDesk = styled.div`
   padding: 20px;
   border-radius: 12px;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  min-height: 80vh;
+  min-height: 50vh;
   width: 100%;
+ 
+
 `;
 const Popup = styled.div`
   position: fixed;
@@ -212,7 +221,7 @@ const Popup = styled.div`
   width: 90%;
   max-width: 600px;
 
-  button {
+  .closeButton {
     position: absolute;
     right: 10px;
     top: 10px;
@@ -221,7 +230,7 @@ const Popup = styled.div`
     cursor: pointer;
   }
   img {
-    width: 200px;
+    max-width: 200px;
   }
 `;
 
