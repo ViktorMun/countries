@@ -12,6 +12,7 @@ const CountryList = () => {
   const [error, setError] = useState(false);
   const [country, setCountry] = useState(null);
   const [viewMode, setViewMode] = useState("table");
+  const [countryImages, setCountryImages] = useState([]);
 
   useEffect(() => {
     fetchCountries();
@@ -40,7 +41,16 @@ const CountryList = () => {
     }
     setLoading(false);
   };
-
+  const fetchCountryImages = async (query) => {
+    try {
+      const response = await axios.get(
+        `https://www.googleapis.com/customsearch/v1?key=AIzaSyANotPKBnbgzw3IM5JgIywhCGSjVnAziQY&cx=099948d2ba9beb939&q=${query} photos of nature buildings&searchType=image&num=5`,
+      );
+      setCountryImages(response.data.items.map((item) => item.link));
+    } catch (error) {
+      setError(error.message);
+    }
+  };
   const sortedFilteredCountries = useMemo(() => {
     const filteredCountries = countries.filter((country) =>
       country.name.common.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -66,6 +76,7 @@ const CountryList = () => {
   };
   const handleCountryClick = async (country) => {
     fetchCountry(country.cca3);
+    fetchCountryImages(country.name.common);
   };
   const toggleViewMode = () => {
     setViewMode(viewMode === "list" ? "table" : "list");
@@ -125,6 +136,16 @@ const CountryList = () => {
               {" "}
               Search in Google about {country.name.common}{" "}
             </a>
+            <div>
+              {countryImages.map((imageUrl, index) => (
+                <img
+                  key={index}
+                  src={imageUrl}
+                  alt={`${country.name.common}`}
+                  onError={(e) => { e.target.style.display = 'none' }} 
+                />
+              ))}
+            </div>
           </Popup>
         </BlackScreen>
       )}
@@ -198,6 +219,9 @@ const Popup = styled.div`
     border: none;
     background-color: transparent;
     cursor: pointer;
+  }
+  img {
+    width: 200px;
   }
 `;
 
