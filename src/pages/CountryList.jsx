@@ -11,6 +11,7 @@ const CountryList = () => {
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [country, setCountry] = useState(null);
+  const [viewMode, setViewMode] = useState("table");
 
   useEffect(() => {
     fetchCountries();
@@ -64,10 +65,11 @@ const CountryList = () => {
     setSortOption(event.target.value);
   };
   const handleCountryClick = async (country) => {
-    console.log(country);
     fetchCountry(country.cca3);
   };
-
+  const toggleViewMode = () => {
+    setViewMode(viewMode === "list" ? "table" : "list");
+  };
   return isLoading ? (
     <> Loading...</>
   ) : (
@@ -85,14 +87,27 @@ const CountryList = () => {
           <option value="name">Name</option>
           <option value="population">Population</option>
         </Select>
+
+        <button onClick={toggleViewMode}>Change View</button>
       </Controls>
       <StyledDesk>
-        <Table
-          data={sortedFilteredCountries}
-          th={["Flag", "Name", "Capital"]}
-          onClickRow={handleCountryClick}
-          className="flag"
-        />
+        {viewMode === "list" ? (
+          <CountryGrid>
+            {sortedFilteredCountries.map((country, index) => (
+              <div key={index} onClick={() => handleCountryClick(country)}>
+                <img src={country.flags.png} alt={country.name.common} />
+                <p>{country.name.common}</p>
+              </div>
+            ))}
+          </CountryGrid>
+        ) : (
+          <Table
+            data={sortedFilteredCountries}
+            th={["Flag", "Name", "Capital"]}
+            onClickRow={handleCountryClick}
+            className="flag"
+          />
+        )}
       </StyledDesk>
 
       {country && (
@@ -103,6 +118,13 @@ const CountryList = () => {
 
             <p>Capital: {country.capital}</p>
             <p>Population: {country.population}</p>
+            <a
+              href={"https://www.google.com/search?q=" + country.name.common}
+              target="_blank"
+            >
+              {" "}
+              Search in Google about {country.name.common}{" "}
+            </a>
           </Popup>
         </BlackScreen>
       )}
@@ -128,6 +150,18 @@ const Controls = styled.div`
   justify-content: center;
   gap: 10px;
   margin-bottom: 20px;
+  button {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #ccc;
+    }
+  }
 `;
 const Select = styled.select`
   padding: 10px;
@@ -164,5 +198,35 @@ const Popup = styled.div`
     border: none;
     background-color: transparent;
     cursor: pointer;
+  }
+`;
+
+const CountryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 20px;
+  div {
+    height: 100px;
+    border: 1px solid #cccccc42;
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.3s;
+
+    &:hover {
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    img {
+      width: 100%;
+      height: 50px;
+    }
+
+    p {
+      text-align: center;
+      font-size: 12px;
+      padding: 5px;
+      margin: 0;
+    }
   }
 `;
