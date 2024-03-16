@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import data from "../response/data.json";
+import axios from 'axios';
 import Table from "../components/Table";
 import Input from "../components/Input";
 import styled from "styled-components";
@@ -8,10 +8,22 @@ const CountryList = () => {
   const [countries, setCountries] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("");
+  const [isLoading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    setCountries(data);
+    fetchCountries();
   }, []);
+
+  const fetchCountries = async () => {
+    try {
+      const response = await axios.get("https://restcountries.com/v3.1/all");
+      setCountries(response.data);
+      setLoading(false);
+    } catch (error) {
+      setError("Error fetching all countries");
+    }
+  };
 
   const sortedFilteredCountries = useMemo(() => {
     const filteredCountries = countries.filter((country) =>
@@ -37,7 +49,9 @@ const CountryList = () => {
     setSortOption(event.target.value);
   };
 
-  return (
+  return isLoading ? (
+    <> Loading...</>
+  ) : (
     <>
       <header>Global Overview of Countries</header>
 
@@ -54,13 +68,14 @@ const CountryList = () => {
           <option value="population">Population</option>
         </Select>
       </Controls>
-<StyledDesk> 
-      <Table
-        data={sortedFilteredCountries}
-        th={["Flag", "Name", "Capital"]}
-        className="flag"
-      />
+      <StyledDesk>
+        <Table
+          data={sortedFilteredCountries}
+          th={["Flag", "Name", "Capital"]}
+          className="flag"
+        />
       </StyledDesk>
+      <div className="error">{error}</div>
     </>
   );
 };
@@ -79,10 +94,10 @@ const Select = styled.select`
   border-radius: 5px;
 `;
 const StyledDesk = styled.div`
- background:#ffffff08;
- padding: 20px;
- border-radius: 12px;
- box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
- min-height: 80vh;
- width: 100%;
+  background: #ffffff08;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  min-height: 80vh;
+  width: 100%;
 `;
