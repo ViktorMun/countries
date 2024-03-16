@@ -20,7 +20,7 @@ const StyledTable = styled.table`
   }
 `;
 
-const Table = ({ data, th, className }) => {
+const Table = ({ data, th, className, onClickRow }) => {
   return (
     <>
       <StyledTable>
@@ -33,7 +33,7 @@ const Table = ({ data, th, className }) => {
         </thead>
         <tbody>
           {data.map((item, index) => (
-            <tr className="body" key={index}>
+            <tr className="body" onClick={() => onClickRow(item)}  key={index}>
               <td>
                 <img
                   className={className}
