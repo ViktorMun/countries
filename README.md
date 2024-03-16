@@ -16,20 +16,17 @@ Styled Components: Utilized for styling the application to enhance the user expe
 Setup and Installation
 Clone the repository:
 
-bash
+
+
 Copy code
-git clone https://github.com/ViktorMun/countries.git
-cd countries
+### git clone https://github.com/ViktorMun/countries.git
+### cd countries
+
 Install the necessary dependencies:
+### npm install
 
-bash
-Copy code
-npm install
 Start the development server:
-
-bash
-Copy code
-npm run vite
+### npm run vite
 Visit http://localhost:5174/ in your web browser to view the application.
 
 API Reference
